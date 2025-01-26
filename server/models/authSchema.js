@@ -1,0 +1,14 @@
+const mongoose = require("mongoose");
+
+// Authentication Schema (for both Students and Admins)
+const authenticationSchema = new mongoose.Schema(
+  {
+    username: { type: String, required: true },
+    password: { type: String, required: true },
+    role: { type: String, enum: ["Student", "Admin"], required: true }, // Role to differentiate between users
+    timest: { type: Date, required: true }, // Include the timest field
+  },
+  { timestamps: true }
+);
+
+module.exports = mongoose.model("Authentication", authenticationSchema);
