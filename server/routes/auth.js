@@ -7,10 +7,10 @@ const jwt = require("jsonwebtoken");
 // User registration
 router.post("/register", async (req, res) => {
   try {
-    const { username, password, role, timest } = req.body;
+    const { username, password, role, timest,email } = req.body;
 
     // Validate all required fields
-    if (!username || !password || !role || !timest) {
+    if (!username || !password || !role || !timest || !email) {
       return res.status(400).json({
         error: "All fields are required: username, password, role, and timest.",
       });
@@ -31,6 +31,7 @@ router.post("/register", async (req, res) => {
       username,
       password: hashedPassword,
       role,
+      email,
       timest, // Include the timest field
     });
 
@@ -70,7 +71,7 @@ router.post("/login", async (req, res) => {
     res.status(200).json({ token });
   } catch (error) {
     console.error("Login error:", error.message);
-    res.status(500).json({ error: `Login failed: ${error.message}` });
+    res.status(500).json({ error: `Login failed: ${error.message}` });//redirecte to new page when login is successful
   }
 });
 

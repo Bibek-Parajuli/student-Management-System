@@ -4,6 +4,10 @@ import "../styles/Home.css";
 import { Navbar } from "./Utility";
 
 const Home = () => {
+
+
+
+  
   return (
     <div>
       <Navbar />

@@ -1,11 +1,10 @@
 import React from 'react';
 import Home from './components/Home';
-import Features from './components/Features';
+import Register from './components/Register';
 const App = () => {
   return (
     <div>
-      <Home />
-      <Features/>
+      <Register/>
     </div>
   );
 };
