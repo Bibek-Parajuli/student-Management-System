@@ -1,18 +1,44 @@
 const express = require("express");
 const router = express.Router();
 const User = require("../models/authSchema");
+const { StudentDetails, ContactDetails } = require("../models/studentDetails");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 // User registration
 router.post("/register", async (req, res) => {
   try {
-    const { username, password, role, timest,email } = req.body;
+    const {
+      username,
+      email,
+      password,
+      role,
+      timest,
+      rollNumber,
+      classRoom,
+      studentPhone,
+      guardianName,
+      guardianContact,
+      address,
+    } = req.body;
 
     // Validate all required fields
-    if (!username || !password || !role || !timest || !email) {
+    if (
+      !username ||
+      !email ||
+      !password ||
+      !role ||
+      !timest ||
+      !rollNumber ||
+      !classRoom ||
+      !studentPhone ||
+      !guardianName ||
+      !guardianContact ||
+      !address
+    ) {
       return res.status(400).json({
-        error: "All fields are required: username, password, role, and timest.",
+        error:
+          "All fields are required: username, email, password, role, timest, rollNumber, classRoom, studentPhone, guardianName, guardianContact, and address.",
       });
     }
 
@@ -26,17 +52,33 @@ router.post("/register", async (req, res) => {
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create a new user
+    // Create and save the user
     const user = new User({
       username,
+      email,
       password: hashedPassword,
       role,
-      email,
-      timest, // Include the timest field
+      timest,
     });
+    const savedUser = await user.save();
 
-    // Save the user
-    await user.save();
+    // Create and save student details
+    const studentDetails = new StudentDetails({
+      rollNumber,
+      classRoom,
+      userId: savedUser._id,
+    });
+    await studentDetails.save();
+
+    // Create and save contact details
+    const contactDetails = new ContactDetails({
+      userId: savedUser._id,
+      studentContactNumber: studentPhone,
+      guardianName,
+      guardianContactNumber: guardianContact,
+      address,
+    });
+    await contactDetails.save();
 
     // Send a success response
     res.status(201).json({ message: "User registered successfully" });
@@ -46,33 +88,37 @@ router.post("/register", async (req, res) => {
   }
 });
 
-// User login
-router.post("/login", async (req, res) => {
-  try {
-    const { username, password } = req.body;
+// // User login
+// router.post("/login", async (req, res) => {
+//   try {
+//     const { username, password } = req.body;
 
-    // Find the user by username
-    const user = await User.findOne({ username });
-    if (!user) {
-      return res.status(401).json({ error: "Authentication failed" });
-    }
+//     // Find the user by username
+//     const user = await User.findOne({ username });
+//     if (!user) {
+//       return res.status(401).json({ error: "Authentication failed" });
+//     }
 
-    // Compare the password
-    const passwordMatch = await bcrypt.compare(password, user.password);
-    if (!passwordMatch) {
-      return res.status(401).json({ error: "Authentication failed" });
-    }
+//     // Compare the password
+//     const passwordMatch = await bcrypt.compare(password, user.password);
+//     if (!passwordMatch) {
+//       return res.status(401).json({ error: "Authentication failed" });
+//     }
 
-    // Generate a JWT token
-    const token = jwt.sign({ userId: user._id }, "your-secret-key", {
-      expiresIn: "1h",
-    });
+//     // Generate a JWT token
+//     const token = jwt.sign(
+//       { userId: user._id, role: user },
+//       "your-secret-key",
+//       {
+//         expiresIn: "1h",
+//       }
+//     );
 
-    res.status(200).json({ token });
-  } catch (error) {
-    console.error("Login error:", error.message);
-    res.status(500).json({ error: `Login failed: ${error.message}` });//redirecte to new page when login is successful
-  }
-});
+//     res.status(200).json({ token });
+//   } catch (error) {
+//     console.error("Login error:", error.message);
+//     res.status(500).json({ error: `Login failed: ${error.message}` });
+//   }
+// });
 
 module.exports = router;

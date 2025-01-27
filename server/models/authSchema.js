@@ -12,4 +12,5 @@ const authenticationSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("Authentication", authenticationSchema);
+const Authentication = mongoose.model("Authentication", authenticationSchema);
+module.exports = Authentication;
