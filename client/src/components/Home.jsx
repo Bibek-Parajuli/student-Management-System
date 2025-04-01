@@ -3,7 +3,7 @@ import '../styles/Home.css';
 import { Link } from 'react-router-dom';
 
 const Home = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(true);
 
   // Sample data - replace with real data from your API
   const [stats] = useState({
@@ -63,15 +63,11 @@ const Home = () => {
           <Link to="/students" className="nav-link">
             <i className="fas fa-users"></i> Students
           </Link>
-          <Link to="/courses" className="nav-link">
-            <i className="fas fa-book-open"></i> Courses
+          
+          <Link to="/attendance" className="nav-link">
+            <i className="fas fa-chart-bar"></i> Take Attadance
           </Link>
-          <Link to="/grades" className="nav-link">
-            <i className="fas fa-chart-bar"></i> Grades
-          </Link>
-          <Link to="/calendar" className="nav-link">
-            <i className="fas fa-calendar-alt"></i> Calendar
-          </Link>
+         
         </nav>
       </header>
 
@@ -92,7 +88,7 @@ const Home = () => {
             <div className="stat-icon">
               <i className="fas fa-book"></i>
             </div>
-            <div className="stat-info">
+            {/* <div className="stat-info">
               <h3>Active Courses</h3>
               <p>{stats.activeCourses}</p>
             </div>
@@ -100,7 +96,7 @@ const Home = () => {
           <div className="stat-card">
             <div className="stat-icon">
               <i className="fas fa-calendar-check"></i>
-            </div>
+            </div> */}
             <div className="stat-info">
               <h3>Upcoming Events</h3>
               <p>{stats.upcomingEvents}</p>
