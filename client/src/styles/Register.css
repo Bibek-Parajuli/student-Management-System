@@ -1,53 +1,47 @@
-.register-container {
-  max-width: 400px;
-  margin: 50px auto;
-  padding: 20px;
-  border-radius: 10px;
-  background-color: #f9f9f9;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
+/* Register.css */
+/* Most styles are shared with Login.css - you can create a shared Auth.css if preferred */
 
-.register-form {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-.register-form h2 {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.register-form input,
-.register-form select {
-  padding: 10px;
-  border: 1px solid #ccc;
+/* Additional specific styles for register page */
+.role-select {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border: 1px solid #ddd;
   border-radius: 5px;
-  font-size: 16px;
-}
-
-.register-form input:focus,
-.register-form select:focus {
-  border-color: #007bff;
-  outline: none;
-}
-
-.register-form span {
-  color: red;
-  font-size: 14px;
-}
-
-.register-form button {
-  padding: 10px 15px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  font-size: 16px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.95rem;
+  background-color: white;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: all 0.3s ease;
 }
 
-.register-form button:hover {
-  background-color: #0056b3;
+.role-select:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+.terms {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+}
+
+.terms input {
+  margin-right: 0.5rem;
+  margin-top: 0.2rem;
+}
+
+.terms label {
+  font-size: 0.85rem;
+  color: #7f8c8d;
+  line-height: 1.4;
+}
+
+.terms a {
+  color: #3498db;
+  text-decoration: none;
+}
+
+.terms a:hover {
+  text-decoration: underline;
 }
