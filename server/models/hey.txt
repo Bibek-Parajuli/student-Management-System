@@ -1,3 +1,0 @@
- name,email,password,role,  //authentication
- rollno,class,attedance,
- studentphone, guardain name, guardain contact,Address

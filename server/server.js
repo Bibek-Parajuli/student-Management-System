@@ -1,20 +1,20 @@
-const express = require("express");
-const app=express();
-const mongoose = require("mongoose");
-require('dotenv').config()
-mongoose.connect(
-  `mongodb+srv://bparajuli:uvCQBfn4gpwVi4zc@cluster0.cfjvn.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`
-);
-const authRoutes = require('./routes/auth');
-const protectedRoute = require('./routes/protectedRoute');
-app.use(express.json());
-app.use('/auth', authRoutes);
-app.use('/protected', protectedRoute);
+require("dotenv").config();
 
-// app.get("/", (req,res)=>{
-//   res.send('hello')
-// })
+const express = require("express");
+const app = express();
+const cors = require("cors");
+const mongoose = require("mongoose");
+mongoose.connect(process.env.MONGOURL
+).then(()=>console.log('database connected'));
+
+
+const std = require("./routes/students");
+app.use(cors());
+app.use(express.json());
+
+app.use("/student", std);
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-console.log(`Server is running on port ${PORT}`);
+  console.log(`Server is running on port ${PORT}`);
 });
+
