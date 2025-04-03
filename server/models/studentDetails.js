@@ -1,32 +1,54 @@
-const mongoose=require('mongoose')
+const mongoose = require("mongoose");
 
-
-const studentDetailsSchema = new mongoose.Schema(
+// Student Schema
+const studentSchema = new mongoose.Schema(
   {
-    rollNumber: { type: String, required: true, unique: true },
-    classRoom: { type: String, required: true }, // e.g., "10A", "12B"
-    attendance: [
-      {
-        date: { type: Date, required: true },
-        status: { type: String, enum: ["Present", "Absent"], required: true },
-      },
-    ],
-    userId: { type: mongoose.Schema.Types.ObjectId, ref: "Authentication", required: true }, // Reference to the Authentication schema
+    name: { type: String, required: true, trim: true },
+    semester: { type: String, required: true },
+    faculty: { type: String, enum: ["CSIT", "BCA", "BIM"], required: true },
+    contactNumber: {
+      type: String,
+      required: true,
+      unique: true,
+      // match: /^[0-9]{10}$/,
+    },
+    email: { type: String, required: true, unique: true, lowercase: true },
+    auth: { type: mongoose.Schema.Types.ObjectId, ref: "Auth" }, // Link to authentication data
   },
   { timestamps: true }
 );
 
-// Contact Details Schema
-const contactDetailsSchema = new mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: "Authentication", required: true }, // Reference to the Authentication schema
-  studentContactNumber: { type: Number, required: true },
-  guardianName: { type: String, required: true },
-  guardianContactNumber: { type: Number, required: true },
-  address:{type:String, required:true}
-});
+// Attendance Schema
+const attendanceSchema = new mongoose.Schema(
+  {
+    student: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Student",
+      required: true,
+    },
+    date: { type: Date, default: Date.now },
+    status: { type: String, enum: ["Present", "Absent"], required: true },
+  },
+  { timestamps: true }
+);
 
-// Exporting Models
+// Authentication Schema
+const authSchema = new mongoose.Schema(
+  {
+    student: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Student",
+      required: true,
+    },
+    password: { type: String, required: true },
+    role: { type: String, default: "admin" },
+  },
+  { timestamps: true }
+);
+
+// Export all models in one object
 module.exports = {
-  StudentDetails: mongoose.model("StudentDetails", studentDetailsSchema),
-  ContactDetails: mongoose.model("ContactDetails", contactDetailsSchema),
+  Student: mongoose.model("Student", studentSchema),
+  Attendance: mongoose.model("Attendance", attendanceSchema),
+  Auth: mongoose.model("Auth", authSchema),
 };

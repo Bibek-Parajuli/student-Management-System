@@ -122,8 +122,7 @@ const Register = () => {
               onChange={handleChange}
               className="role-select"
             >
-              <option value="student">Student</option>
-              <option value="teacher">Teacher</option>
+              
               <option value="admin">Administrator</option>
             </select>
           </div>
