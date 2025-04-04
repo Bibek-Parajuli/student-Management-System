@@ -88,15 +88,7 @@ const Home = () => {
             <div className="stat-icon">
               <i className="fas fa-book"></i>
             </div>
-            {/* <div className="stat-info">
-              <h3>Active Courses</h3>
-              <p>{stats.activeCourses}</p>
-            </div>
-          </div>
-          <div className="stat-card">
-            <div className="stat-icon">
-              <i className="fas fa-calendar-check"></i>
-            </div> */}
+          
             <div className="stat-info">
               <h3>Upcoming Events</h3>
               <p>{stats.upcomingEvents}</p>
