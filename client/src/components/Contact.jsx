@@ -1,5 +1,6 @@
 import  { useState } from 'react';
 import "../styles/contact.css";
+import Navbar from './Utility';
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -38,6 +39,10 @@ const Contact = () => {
   };
 
   return (
+    <>  
+    
+    <Navbar/>
+    
     <div className="contact-container">
       <div className="contact-header">
         <h1>Contact Us</h1>
@@ -132,6 +137,8 @@ const Contact = () => {
         </div>
       </div>
     </div>
+    </>
+
   );
 };
 
