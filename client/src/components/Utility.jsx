@@ -1,66 +1,59 @@
-import  { useState } from 'react';
-// import '../styles/Home.css';
-import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import '../styles/Home.css';
 
-const Navbar = () => {
+const Navbar = ({ title = "Student Dashboard", user = "Bibek", notifications = 1 }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(true);
+  const location = useLocation();
 
-  // Sample data - replace with real data from your API
-  const [stats] = useState({
-    totalStudents: 1245,
-    activeCourses: 45,
-    upcomingEvents: 3,
-    newMessages: 2
-  });
-
-
+  const links = [
+    { path: "/dashboard", icon: "fa-home", label: "Dashboard" },
+    { path: "/students", icon: "fa-users", label: "Students" },
+    { path: "/attendance", icon: "fa-chart-bar", label: "Take Attendance" },
+  ];
 
   return (
-     <div className='home-container'>
-      {/* Header */}
-      <header className="home-header">
-        <div className="header-content">
-          <button 
-            className="mobile-menu-btn"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            aria-label="Toggle navigation menu"
-          >
-            <i className="fas fa-bars"></i>
+    <header id='blue' className="home-header-fix">
+      <div  className="header-content">
+        <button
+          className="mobile-menu-btn"
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+          aria-label="Toggle navigation menu"
+        >
+          <i className="fas fa-bars"></i>
+        </button>
+        <h1>{title}</h1>
+        <div className="header-actions">
+          <button className="notification-btn">
+            <i className="fas fa-bell"></i>
+            {notifications > 0 && (
+              <span className="notification-badge">{notifications}</span>
+            )}
           </button>
-          <h1>Student Dashboard</h1>
-          <div className="header-actions">
-            <button className="notification-btn">
-              <i className="fas fa-bell"></i>
-              {stats.newMessages > 0 && (
-                <span className="notification-badge">{stats.newMessages}</span>
-              )}
-            </button>
-            <div className="user-profile">
-              <img 
-                src="https://via.placeholder.com/40" 
-                alt="User profile" 
-                className="profile-pic"
-              />
-              <span>John Doe</span>
-            </div>
+          <div className="user-profile">
+            <img
+              src={user.profilePic || "https://via.placeholder.com/40"}
+              alt="User profile"
+              className="profile-pic"
+            />
+            <span>{user || "Guest"}</span>
           </div>
         </div>
+      </div>
 
-        {/* Navigation */}
-        <nav className={`main-nav ${isMenuOpen ? 'open' : ''}`}>
-          <Link to="/dashboard" className="nav-link active">
-            <i className="fas fa-home"></i> Dashboard
+      <nav className={`main-nav ${isMenuOpen ? 'open' : ''}`}>
+        {links.map((link) => (
+          <Link
+            key={link.path}
+            to={link.path}
+            className={`nav-link ${location.pathname === link.path ? 'active' : ''}`}
+          >
+            <i className={`fas ${link.icon}`}></i> {link.label}
           </Link>
-          <Link to="/students" className="nav-link">
-            <i className="fas fa-users"></i> Students
-          </Link>
-          
-          <Link to="/attendance" className="nav-link">
-            <i className="fas fa-chart-bar"></i> Take Attadance
-          </Link>
-         
-        </nav>
-      </header>
-      </div>)}
+        ))}
+      </nav>
+    </header>
+  );
+};
 
-      export default Navbar
+export default Navbar;

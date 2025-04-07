@@ -41,7 +41,7 @@ const Contact = () => {
   return (
     <>  
     
-    <Navbar/>
+    <Navbar title=''/>
     
     <div className="contact-container">
       <div className="contact-header">

@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import "../styles/Attadance.css";
 import useStudents from "../hooks/useStudent";
 import Navbar from "./Utility";
+// import Navbar from "./Utility";
 const AttendancePage = () => {
   const { students, loading, error } = useStudents();
   const [selectedFaculty, setSelectedFaculty] = useState("CSIT");
@@ -56,7 +56,8 @@ const AttendancePage = () => {
   //Render Error while Error occured
   if (error) return <div> Error while Fetching data</div>;
   return (
-    <>
+    <> 
+    <Navbar title="Student Attendance" />
       <div className="attendance-container">
         <div className="filters">
           <div className="filter-group">

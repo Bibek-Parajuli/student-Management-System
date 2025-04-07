@@ -2,11 +2,15 @@
 .home-container {
   font-family: 'Poppins', sans-serif;
   min-height: 100vh;
-  background-color: #f5f6fa;
+  background-color: white;
+}
+#blue{
+  background-color: #514f4fd5;
+  color: white;
 }
 
 .home-header {
-  background-color: #2c3e50;
+  background-color: white;
   color: white;
   padding: 1rem 0;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -83,7 +87,7 @@
 }
 
 .nav-link {
-  color: rgba(255, 255, 255, 0.8);
+  color: blue;
   text-decoration: none;
   padding: 0.5rem 0;
   border-bottom: 2px solid transparent;
@@ -92,7 +96,7 @@
 
 .nav-link:hover,
 .nav-link.active {
-  color: white;
+  color: purple;
   border-bottom-color: #3498db;
 }
 
@@ -274,6 +278,7 @@
 }
 
 .action-btn {
+  width: 100%;
   background: #3498db;
   color: white;
   border: none;

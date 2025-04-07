@@ -21,7 +21,7 @@ const Students = () => {
 
   return (
     <>
-      
+      <Navbar title="All Students"/>
 
       <div className="student-table-container">
         <div className="filters">

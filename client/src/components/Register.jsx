@@ -1,49 +1,68 @@
-import React, { useState } from 'react';
-import '../styles/Register.css';
-import { Link } from 'react-router-dom';
+import React, { useState } from "react";
+import "../styles/Register.css";
+import { Link } from "react-router-dom";
+import axios from "axios";
 
 const Register = () => {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    role: 'student'
+    fullName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    role: "admin",
   });
 
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
 
+  // Corrected handleChange function
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prevState => ({
+    setFormData((prevState) => ({
       ...prevState,
-      [name]: value
+      [name]: value,
     }));
+  };
+
+  // Combined submission handler
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!validateForm()) return;
+
+    setIsLoading(true);
+    try {
+      console.log(formData);
+      
+      // Replace with your actual API endpoint
+      await axios.post("https://localhost:3000/auth/register", formData);
+      console.log("Registration successful");
+    } catch (error) {
+      console.error("Registration error:", error);
+      // Handle API errors here (e.g., display server errors)
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const validateForm = () => {
     const newErrors = {};
-    if (!formData.name) newErrors.name = 'Name is required';
-    if (!formData.email) newErrors.email = 'Email is required';
-    if (!formData.password) newErrors.password = 'Password is required';
-    if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = 'Passwords do not match';
+    if (!formData.fullName.trim()) newErrors.fullName = "Name is required";
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = "Email is invalid";
     }
+    if (!formData.password) {
+      newErrors.password = "Password is required";
+    } else if (formData.password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters";
+    }
+    if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = "Passwords do not match";
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (validateForm()) {
-      setIsLoading(true);
-      // Simulate API call
-      setTimeout(() => {
-        console.log('Registration data:', formData);
-        setIsLoading(false);
-      }, 1500);
-    }
   };
 
   return (
@@ -55,20 +74,25 @@ const Register = () => {
         </div>
 
         <form onSubmit={handleSubmit} className="auth-form">
+          {/* Full Name Input - Corrected name attribute */}
           <div className="form-group">
-            <label htmlFor="name">Full Name</label>
+            <label htmlFor="fullName">Full Name</label>
             <input
               type="text"
-              id="name"
-              name="name"
-              value={formData.name}
+              id="fullName"
+              name="fullName"
+              value={formData.fullName}
               onChange={handleChange}
-              className={errors.name ? 'error' : ''}
+              className={errors.fullName ? "error" : ""}
               placeholder="Enter your full name"
+              disabled={isLoading}
             />
-            {errors.name && <span className="error-message">{errors.name}</span>}
+            {errors.fullName && (
+              <span className="error-message">{errors.fullName}</span>
+            )}
           </div>
 
+          {/* Email Input */}
           <div className="form-group">
             <label htmlFor="email">Email Address</label>
             <input
@@ -77,12 +101,16 @@ const Register = () => {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              className={errors.email ? 'error' : ''}
+              className={errors.email ? "error" : ""}
               placeholder="Enter your email"
+              disabled={isLoading}
             />
-            {errors.email && <span className="error-message">{errors.email}</span>}
+            {errors.email && (
+              <span className="error-message">{errors.email}</span>
+            )}
           </div>
 
+          {/* Password Inputs */}
           <div className="form-group">
             <label htmlFor="password">Password</label>
             <input
@@ -91,10 +119,13 @@ const Register = () => {
               name="password"
               value={formData.password}
               onChange={handleChange}
-              className={errors.password ? 'error' : ''}
+              className={errors.password ? "error" : ""}
               placeholder="Create a password"
+              disabled={isLoading}
             />
-            {errors.password && <span className="error-message">{errors.password}</span>}
+            {errors.password && (
+              <span className="error-message">{errors.password}</span>
+            )}
           </div>
 
           <div className="form-group">
@@ -105,14 +136,16 @@ const Register = () => {
               name="confirmPassword"
               value={formData.confirmPassword}
               onChange={handleChange}
-              className={errors.confirmPassword ? 'error' : ''}
+              className={errors.confirmPassword ? "error" : ""}
               placeholder="Confirm your password"
+              disabled={isLoading}
             />
             {errors.confirmPassword && (
               <span className="error-message">{errors.confirmPassword}</span>
             )}
           </div>
 
+          {/* Role Selection */}
           <div className="form-group">
             <label htmlFor="role">I am a</label>
             <select
@@ -121,36 +154,51 @@ const Register = () => {
               value={formData.role}
               onChange={handleChange}
               className="role-select"
+              disabled={isLoading}
             >
-              
               <option value="admin">Administrator</option>
             </select>
           </div>
 
+          {/* Terms Checkbox */}
           <div className="form-group terms">
-            <input type="checkbox" id="terms" required />
+            <input
+              type="checkbox"
+              id="terms"
+              required
+              disabled={isLoading}
+            />
             <label htmlFor="terms">
-              I agree to the <Link to="/terms">Terms of Service</Link> and{' '}
+              I agree to the <Link to="/terms">Terms of Service</Link> and{" "}
               <Link to="/privacy">Privacy Policy</Link>
             </label>
           </div>
 
-          <button type="submit" className="auth-btn" disabled={isLoading}>
+          {/* Submit Button */}
+          <button
+            type="submit"
+            className="auth-btn"
+            disabled={isLoading}
+          >
             {isLoading ? (
               <>
                 <i className="fas fa-spinner fa-spin"></i> Registering...
               </>
             ) : (
-              'Register'
+              "Register"
             )}
           </button>
 
+          {/* Login Link */}
           <div className="auth-footer">
-            <p>Already have an account? <Link to="/login">Login here</Link></p>
+            <p>
+              Already have an account? <Link to="/login">Login here</Link>
+            </p>
           </div>
         </form>
       </div>
 
+      {/* Decoration Section */}
       <div className="auth-decoration">
         <div className="decoration-circle"></div>
         <div className="decoration-circle"></div>

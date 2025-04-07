@@ -35,20 +35,38 @@ const attendanceSchema = new mongoose.Schema(
 // Authentication Schema
 const authSchema = new mongoose.Schema(
   {
-    student: {
+    fullName: { type: String, require: true },
+    studentDetails: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Student",
-      required: true,
     },
     password: { type: String, required: true },
-    role: { type: String, default: "admin" },
+    role: {
+      type: String,
+      enum: ["admin", "student"],
+      default: "admin",
+      require: true,
+    },
+    email:{type:String,require:true},
+
+    adminDetails: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Admin",
+    },
   },
+
   { timestamps: true }
 );
-
+const adminDetails = new mongoose.Schema({
+  name: { type: String, required: true },
+  contactNbr: { type: String, require: true },
+  address: { type: String, require: true },
+});
 // Export all models in one object
 module.exports = {
   Student: mongoose.model("Student", studentSchema),
+  AdminSchema: mongoose.model("Admin", adminDetails),
+
   Attendance: mongoose.model("Attendance", attendanceSchema),
   Auth: mongoose.model("Auth", authSchema),
 };

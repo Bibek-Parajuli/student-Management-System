@@ -10,9 +10,10 @@ mongoose
   .then(() => console.log("database connected"));
 const { Student, Auth, Attendance } = require("./models/studentDetails");
 const studentsRoute = require("./routes/students");
+const authRoute=require('./routes/authentication')
 app.use(express.json());
 
-
+app.use('/auth',authRoute);
 app.use("/student", studentsRoute);
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

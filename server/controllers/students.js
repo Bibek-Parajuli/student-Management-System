@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const {Student} = require("../models/studentDetails");
 
 const addStudent = async (req, res) => {
-  const { name, faculty, semester, contactNumber, email } = req.body;
+  const { name, email, faculty, contactNumber, semester } = req.body;
 
   // Validate the input fields
   if (!name || !faculty || !semester || !contactNumber || !email) {
