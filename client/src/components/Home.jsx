@@ -1,18 +1,22 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "../styles/Home.css";
 import { Link } from "react-router-dom";
-const Button = ({ text,link }) => {
+import { Unauthorize } from "./Utility";
+
+const Button = ({ text, link }) => {
   return (
     <Link to={link}>
-    <button className="action-btn">
-      <i className="fas fa-envelope"></i> {text}
-    </button>
+      <button className="action-btn">
+        <i className="fas fa-envelope"></i> {text}
+      </button>
     </Link>
   );
 };
+
 const Home = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(true);
-
+  const [isAuthenticated, setIsAuthenticated] = useState(false); // Track authentication state
+  
   // Sample data - replace with real data from your API
   const [stats] = useState({
     totalStudents: 1245,
@@ -22,9 +26,24 @@ const Home = () => {
   });
 
   const [recentAnnouncements] = useState([
-    { id: 1, title: "Midterm Schedule Released", body:'This is dherai data', date: "2024-03-15" },
-    { id: 2, title: "New Library Hours",body:'This is dherai data', date: "2024-03-14" },
-    { id: 3, title: "Career Fair Registration Open",body:'This is dherai data', date: "2024-03-13" },
+    {
+      id: 1,
+      title: "Midterm Schedule Released",
+      body: "This is dherai data",
+      date: "2024-03-15",
+    },
+    {
+      id: 2,
+      title: "New Library Hours",
+      body: "This is dherai data",
+      date: "2024-03-14",
+    },
+    {
+      id: 3,
+      title: "Career Fair Registration Open",
+      body: "This is dherai data",
+      date: "2024-03-13",
+    },
   ]);
 
   const [upcomingEvents] = useState([
@@ -42,6 +61,22 @@ const Home = () => {
     },
   ]);
 
+  // Check authentication on component mount
+  useEffect(() => {
+    const token = localStorage.getItem("token"); // Get token from localStorage
+    if (token) {
+      setIsAuthenticated(true); // User is authenticated
+    } else {
+      setIsAuthenticated(false); // User is not authenticated
+    }
+  }, []); // Run this only once when the component mounts
+
+  // If not authenticated, show the Unauthorize component
+  if (!isAuthenticated) {
+    return <Unauthorize />;
+  }
+
+  // If authenticated, render the rest of the page
   return (
     <div className="home-container">
       {/* Header */}
@@ -59,7 +94,9 @@ const Home = () => {
             <button className="notification-btn">
               <i className="fas fa-bell"></i>
               {stats.newMessages > 0 && (
-                <span className="notification-badge">{stats.newMessages}</span>
+                <span className="notification-badge">
+                  {stats.newMessages}
+                </span>
               )}
             </button>
             <div className="user-profile">
@@ -102,7 +139,7 @@ const Home = () => {
             <div className="stat-info">
               <h3>Total Students</h3>
               <p>{stats.totalStudents}</p>
-            </div>  
+            </div>
           </div>
           <div className="stat-card">
             <div className="stat-icon">
@@ -183,9 +220,9 @@ const Home = () => {
               <h2>Quick Actions</h2>
             </div>
             <div className="action-buttons">
-              <Button text="Add New Student" link="/addstudent"/>
+              <Button text="Add New Student" link="/addstudent" />
               <Button text="Send Announcement" link="/addannouncement" />
-              <Button  text="Send Email-Announcement" link="/announcement" />
+              <Button text="Send Email-Announcement" link="/announcement" />
             </div>
           </aside>
         </div>
@@ -193,8 +230,5 @@ const Home = () => {
     </div>
   );
 };
-
-
-
 
 export default Home;

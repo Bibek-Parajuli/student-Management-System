@@ -55,5 +55,11 @@ const Navbar = ({ title = "Student Dashboard", user = "Bibek", notifications = 1
     </header>
   );
 };
-
+ 
+ export const Unauthorize = () => {
+   return (
+     <div>Unauthorize</div>
+   )
+ }
+ 
 export default Navbar;

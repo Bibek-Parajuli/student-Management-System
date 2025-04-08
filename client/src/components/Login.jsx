@@ -1,15 +1,18 @@
-import React, { useState } from 'react';
+import  { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import "../styles/Login.css";
-import { Link } from 'react-router-dom';
 
 const Login = () => {
+  const [errorMessage, setErrorMessage] = useState('');
+  const [errors, setErrors] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   });
-
-  const [errors, setErrors] = useState({});
-  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -21,21 +24,53 @@ const Login = () => {
 
   const validateForm = () => {
     const newErrors = {};
-    if (!formData.email) newErrors.email = 'Email is required';
-    if (!formData.password) newErrors.password = 'Password is required';
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    
+    if (!formData.email) {
+      newErrors.email = 'Email is required';
+    } else if (!emailRegex.test(formData.email)) {
+      newErrors.email = 'Invalid email format';
+    }
+    
+    if (!formData.password) {
+      newErrors.password = 'Password is required';
+    }
+    
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (validateForm()) {
-      setIsLoading(true);
-      // Simulate API call
-      setTimeout(() => {
-        console.log('Login data:', formData);
-        setIsLoading(false);
-      }, 1500);
+    if (!validateForm()) return;
+
+    setIsLoading(true);
+    setErrorMessage('');
+
+    try {
+      const response = await axios.post(
+        'http://localhost:3000/auth/login',
+        formData
+      );
+
+      if (response.status === 201) {
+        // Store the token in localStorage
+        alert(response.data.token)
+        console.log(response.data.token);
+        
+        localStorage.setItem('token', response.data.token);
+        
+        // Redirect to dashboard or home page
+        navigate('/dashboard');
+      }
+    } catch (error) {
+      if (error.response) {
+        setErrorMessage(error.response.data.message || 'Login failed');
+      } else {
+        setErrorMessage('Error occurred! Please try again later');
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -48,6 +83,12 @@ const Login = () => {
         </div>
 
         <form onSubmit={handleSubmit} className="auth-form">
+          {errorMessage && (
+            <div className="error-message global-error">
+              {errorMessage}
+            </div>
+          )}
+
           <div className="form-group">
             <label htmlFor="email">Email Address</label>
             <input
@@ -97,7 +138,7 @@ const Login = () => {
           </button>
 
           <div className="auth-footer">
-            <p> Dont have an account? <Link to="/register">Register here</Link></p>
+            <p>Don&apos;t have an account? <Link to="/register">Register here</Link></p>
           </div>
         </form>
       </div>

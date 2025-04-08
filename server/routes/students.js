@@ -1,4 +1,6 @@
 const express = require("express");
+const verifyJwt=require('../middleware/verifyJwt')
+
 const {
     getAllStudent,
   updateStudent,
@@ -8,9 +10,9 @@ const {
 
 const router = express.Router();
 
-router.post("/add", addStudent); 
-router.delete("/delete/:id", deleteUser); 
-router.put("/update/:id", updateStudent); 
-router.get("/all", getAllStudent); 
+router.post("/add", verifyJwt, addStudent); 
+router.delete("/delete/:id",verifyJwt, deleteUser); 
+router.put("/update/:id",verifyJwt, updateStudent); 
+router.get("/all",verifyJwt, getAllStudent); 
 
 module.exports = router;

@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import  { useState } from "react";
 import "../styles/Register.css";
-import { Link } from "react-router-dom";
+import { Link,useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const Register = () => {
@@ -14,6 +14,7 @@ const Register = () => {
 
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const navigate=useNavigate()
 
   // Corrected handleChange function
   const handleChange = (e) => {
@@ -34,8 +35,11 @@ const Register = () => {
       console.log(formData);
       
       // Replace with your actual API endpoint
-      await axios.post("https://localhost:3000/auth/register", formData);
+      await axios.post("http://localhost:3000/auth/register", formData);
+
       console.log("Registration successful");
+      navigate('/login');
+
     } catch (error) {
       console.error("Registration error:", error);
       // Handle API errors here (e.g., display server errors)

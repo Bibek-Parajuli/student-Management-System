@@ -1,7 +1,9 @@
 import { useState } from "react";
 import useStudents from "../hooks/useStudent";
 import "../styles/Students.css";
-import Navbar from "./Utility";
+import Navbar, { Unauthorize } from "./Utility";
+const token = localStorage.getItem('token')
+
 
 const Students = () => {
   const { students, loading, error } = useStudents();
@@ -18,6 +20,7 @@ const Students = () => {
 
   if (loading) return <div className="loading">Loading student data...</div>;
   if (error) return <div className="error">Error: {error}</div>;
+  if(!token) return <Unauthorize/>
 
   return (
     <>

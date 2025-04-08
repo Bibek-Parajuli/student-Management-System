@@ -1,9 +1,10 @@
-// AddStudent.jsx
 import React, { useState } from 'react';
 import styles from '../styles/StudentCRUD.module.css';
 import Navbar from './Utility';
 import axios from 'axios';
-const URL='http://localhost:3000/student'
+
+const URL = 'http://localhost:3000/student';
+
 const AddStudent = () => {
   const [formData, setFormData] = useState({
     name: '',
@@ -14,42 +15,53 @@ const AddStudent = () => {
   });
 
   const [errors, setErrors] = useState({});
-  function  handleAdd(){
-    axios.post(`${URL}/add`, 
-        formData
-    ).then(function (response){
-        console.log(response);
-        
-    }).catch(function(err){
-        console.log(err);
-        
-    })
-    // console.log(formData);
-    
-}  
-  const handleSubmit = (e) => {
+  const [responseMessage, setResponseMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const newErrors = {};
+
+    // Basic Validation
     if (!formData.name) newErrors.name = 'Name is required';
     if (!formData.email) newErrors.email = 'Email is required';
     if (!formData.contactNumber) newErrors.contactNumber = 'Contact Number is required';
     if (!formData.semester) newErrors.semester = 'Semester is required'; // Semester validation
-    if (!formData.faculty) newErrors.semester = 'Semester is required'; // Semester validation
+    if (!formData.faculty) newErrors.faculty = 'Faculty is required';
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
     }
 
-    console.log('Student Data:', formData);
-    setFormData({
-      name: '',
-      email: '',
-      contactNumber: '',
-      faculty: 'CSIT',
-      semester: '1'
-    });
-    setErrors({});
+    try {
+      setIsLoading(true);
+      setResponseMessage('');
+
+      // Make POST request to add student
+      const response = await axios.post(`${URL}/add`, formData);
+      
+      if (response.status === 201) {
+        setResponseMessage(response.data.message);  // Success message
+        setFormData({
+          name: '',
+          email: '',
+          contactNumber: '',
+          faculty: 'CSIT',
+          semester: '1'
+        });
+        setErrors({});
+      }
+    } catch (err) {
+      // Handle error response
+      if (err.response) {
+        setResponseMessage(err.response.data.message); // Error message from server
+      } else {
+        setResponseMessage('An unexpected error occurred');
+      }
+      console.log(err); // Log error for debugging
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleChange = (e) => {
@@ -63,14 +75,10 @@ const AddStudent = () => {
 
   return (
     <div className={styles.container}>
-      {/* <header className={styles.header}>
-        <h1>Add New Student</h1>
-      </header> */}
-      <Navbar title='Add student'/>
+      <Navbar title="Add student" />
 
       <main className={styles.formContainer}>
         <form onSubmit={handleSubmit} className={styles.form}>
-          {/* ... existing fields ... */}
           <div className={styles.formGroup}>
             <label htmlFor="name" className={styles.label}>
               Full Name
@@ -136,13 +144,12 @@ const AddStudent = () => {
               className={`${styles.select} ${errors.semester ? styles.errorInput : ''}`}
             >
               {[...Array(8)].map((_, i) => (
-                <option key={i+1} value={`${i+1}`}>
-                  {i+1}
+                <option key={i + 1} value={`${i + 1}`}>
+                  {i + 1}
                 </option>
               ))}
             </select>
-            {errors.semester && 
-              <span className={styles.errorText}>{errors.semester}</span>}
+            {errors.semester && <span className={styles.errorText}>{errors.semester}</span>}
           </div>
 
           {/* Faculty Field */}
@@ -162,21 +169,23 @@ const AddStudent = () => {
               <option value="BIM">BIM</option>
             </select>
           </div>
+
           <div className={styles.buttonContainer}>
-            <button type="submit" onClick={handleAdd} className={styles.submitButton}>
-              Add Student
+            <button type="submit" className={styles.submitButton} disabled={isLoading}>
+              {isLoading ? 'Adding...' : 'Add Student'}
             </button>
           </div>
         </form>
+
+        {/* Displaying Response Message */}
+        {responseMessage && (
+          <div className={`${styles.responseMessage} ${responseMessage.includes('successfully') ? styles.success : styles.error}`}>
+            {responseMessage}
+          </div>
+        )}
       </main>
     </div>
   );
 };
-
-
-
-function handleUpdate(){
-    //update student details 
-}
 
 export default AddStudent;

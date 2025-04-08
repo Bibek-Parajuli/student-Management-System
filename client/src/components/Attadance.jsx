@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import "../styles/Attadance.css";
 import useStudents from "../hooks/useStudent";
-import Navbar from "./Utility";
+import Navbar, { Unauthorize } from "./Utility";
+const token = localStorage.getItem('token')
 // import Navbar from "./Utility";
 const AttendancePage = () => {
   const { students, loading, error } = useStudents();
@@ -55,6 +56,8 @@ const AttendancePage = () => {
   }
   //Render Error while Error occured
   if (error) return <div> Error while Fetching data</div>;
+ if(!token) return <Unauthorize/>
+  
   return (
     <> 
     <Navbar title="Student Attendance" />
