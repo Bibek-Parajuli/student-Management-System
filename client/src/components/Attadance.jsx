@@ -2,43 +2,159 @@ import { useState, useEffect } from "react";
 import "../styles/Attadance.css";
 import useStudents from "../hooks/useStudent";
 import Navbar, { Unauthorize } from "./Utility";
-const token = localStorage.getItem('token')
-// import Navbar from "./Utility";
+
+const token = localStorage.getItem("token");
+
 const AttendancePage = () => {
   const { students, loading, error } = useStudents();
+
   const [selectedFaculty, setSelectedFaculty] = useState("CSIT");
   const [selectedSemester, setSelectedSemester] = useState("1");
   const [selectedDate, setSelectedDate] = useState(
     new Date().toISOString().split("T")[0]
   );
-  const [allStudents, setAllStudents] = useState([]); // Ensure it's an array
   const [filteredStudents, setFilteredStudents] = useState([]);
+  const [attendanceData, setAttendanceData] = useState({});
+  const [monthlySummary, setMonthlySummary] = useState({});
+  const [loadingStudents, setLoadingStudents] = useState({});
 
+  // Filter students by faculty & semester
   useEffect(() => {
+    const filtered = students.filter(
+      (student) =>
+        student.faculty === selectedFaculty &&
+        student.semester === selectedSemester
+    );
+    setFilteredStudents(filtered);
+  }, [students, selectedFaculty, selectedSemester]);
 
-    setAllStudents(students);
-    console.log(students);
-
-  }, [students]); 
-
+  // Load today's attendance for filtered students
   useEffect(() => {
-    const filtered = allStudents.filter((student) => {
-      const matchesFaculty = student.faculty === selectedFaculty;
-      const matchesSemester = student.semester === selectedSemester;
-      return matchesFaculty && matchesSemester;
+    const fetchAttendanceForDate = async () => {
+      const initialized = {};
+
+      await Promise.all(
+        filteredStudents.map(async (student) => {
+          try {
+            const res = await fetch(
+              `http://localhost:3000/api/attendance/${student._id}?date=${selectedDate}`,
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              }
+            );
+            const data = await res.json();
+            initialized[student._id] = data?.status?.toLowerCase() || "absent";
+          } catch (err) {
+            console.error(`Error fetching attendance for ${student.name}`, err);
+            initialized[student._id] = "absent";
+          }
+        })
+      );
+
+      setAttendanceData(initialized);
+    };
+
+    if (filteredStudents.length > 0) {
+      fetchAttendanceForDate();
+    }
+  }, [filteredStudents, selectedDate]);
+
+  // Load monthly summary
+  useEffect(() => {
+    const month = selectedDate.slice(0, 7); // YYYY-MM
+
+    filteredStudents.forEach(async (student) => {
+      try {
+        const res = await fetch(
+          `http://localhost:3000/api/summary/${student._id}?month=${month}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        if (!res.ok) throw new Error("Summary fetch failed");
+
+        const data = await res.json();
+        setMonthlySummary((prev) => ({
+          ...prev,
+          [student._id]: data,
+        }));
+      } catch (err) {
+        console.error(`Failed to fetch summary for ${student.name}`, err);
+      }
     });
+  }, [filteredStudents, selectedDate]);
 
-    setFilteredStudents(filtered); // Set the filtered students data to state
-  }, [allStudents, selectedFaculty, selectedSemester]); // Runs when any of the dependencies change
+  // Toggle attendance
+  const handleAttendanceToggle = async (studentId) => {
+    const currentStatus = attendanceData[studentId] || "absent";
+    const newStatus = currentStatus === "present" ? "absent" : "present";
 
-  const handleAttendanceToggle = (studentId) => {
-    // Example attendance toggle logic (You can modify this to suit your needs)
-    console.log(`Toggled attendance for student ${studentId}`);
+    setLoadingStudents((prev) => ({ ...prev, [studentId]: true }));
+
+    try {
+      await sendAttendanceToBackend(studentId, newStatus);
+
+      setAttendanceData((prev) => ({ ...prev, [studentId]: newStatus }));
+
+      setMonthlySummary((prev) => {
+        const current = prev[studentId] || {
+          present: 0,
+          absent: 0,
+          percentage: 0,
+        };
+        let updated = { ...current };
+
+        if (newStatus === "present" && currentStatus === "absent") {
+          updated.present += 1;
+          updated.absent = Math.max(0, updated.absent - 1);
+        } else if (newStatus === "absent" && currentStatus === "present") {
+          updated.present = Math.max(0, updated.present - 1);
+          updated.absent += 1;
+        }
+
+        const total = updated.present + updated.absent;
+        updated.percentage =
+          total > 0 ? Math.round((updated.present / total) * 100) : 0;
+
+        return {
+          ...prev,
+          [studentId]: updated,
+        };
+      });
+    } catch (err) {
+      alert("Failed to update attendance.");
+    } finally {
+      setLoadingStudents((prev) => ({ ...prev, [studentId]: false }));
+    }
   };
 
-  const calculateMonthlyAttendance = (studentId) => {
-    // This is a placeholder for monthly attendance calculation
-    return { present: 10, absent: 5, percentage: 67 };
+  // Save attendance to backend
+  const sendAttendanceToBackend = async (studentId, status) => {
+    const normalizedDate = new Date(selectedDate + "T00:00:00.000Z");
+
+    const res = await fetch("http://localhost:3000/api/attendance", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        studentId,
+        status,
+        date: normalizedDate,
+      }),
+    });
+
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(error.message || "Failed to save attendance");
+    }
+
+    return await res.json();
   };
 
   const formatDate = (dateString) => {
@@ -50,17 +166,13 @@ const AttendancePage = () => {
     });
   };
 
-  // Render loading spinner if data is still loading
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-  //Render Error while Error occured
-  if (error) return <div> Error while Fetching data</div>;
- if(!token) return <Unauthorize/>
-  
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error while fetching data</div>;
+  if (!token) return <Unauthorize />;
+
   return (
-    <> 
-    <Navbar title="Student Attendance" />
+    <>
+      <Navbar title="Student Attendance" />
       <div className="attendance-container">
         <div className="filters">
           <div className="filter-group">
@@ -117,28 +229,36 @@ const AttendancePage = () => {
           </thead>
           <tbody>
             {filteredStudents.map((student) => (
-              <tr key={student.id}>
+              <tr key={student._id}>
                 <td>{student.name}</td>
                 <td>{student.contactNumber}</td>
                 <td>
                   <button
-                    className="attendance-toggle"
-                    onClick={() => handleAttendanceToggle(student.id)}
+                    className={`attendance-toggle ${
+                      attendanceData[student._id] === "present"
+                        ? "green"
+                        : "red"
+                    }`}
+                    onClick={() => handleAttendanceToggle(student._id)}
+                    disabled={loadingStudents[student._id]}
                   >
-                    Toggle Attendance
+                    {loadingStudents[student._id]
+                      ? "Saving..."
+                      : attendanceData[student._id] === "present"
+                      ? "Present"
+                      : "Absent"}
                   </button>
                 </td>
                 <td>
                   <div className="monthly-stats">
                     <span>
-                      Present: {calculateMonthlyAttendance(student.id).present}
+                      Present: {monthlySummary[student._id]?.present ?? 0}
                     </span>
                     <span>
-                      Absent: {calculateMonthlyAttendance(student.id).absent}
+                      Absent: {monthlySummary[student._id]?.absent ?? 0}
                     </span>
                     <span>
-                      Percentage:{" "}
-                      {calculateMonthlyAttendance(student.id).percentage}%
+                      Percentage: {monthlySummary[student._id]?.percentage ?? 0}%
                     </span>
                   </div>
                 </td>

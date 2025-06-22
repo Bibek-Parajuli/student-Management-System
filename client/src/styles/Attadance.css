@@ -103,6 +103,7 @@
   cursor: pointer;
   transition: all 0.3s ease;
   font-weight: 500;
+  background-color: green;
 }
 
 .attendance-toggle.present {

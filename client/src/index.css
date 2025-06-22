@@ -1,5 +1,22 @@
-*{
-    scroll-behavior: smooth;
-    margin: 0px;
-    padding: 0px;
+* {
+  scroll-behavior: smooth;
+  margin: 0px;
+  padding: 0px;
+}
+Link {
+  text-decoration: none;
+} /* App.css or your global CSS file */
+a.no-underline,
+a.no-underline:visited,
+a.no-underline:hover,
+a.no-underline:active {
+  text-decoration: none !important;
+}
+.red{
+  background-color: red!important;
+  color: white;
+}
+.green{
+  background-color: green!important;
+  color: white;
 }

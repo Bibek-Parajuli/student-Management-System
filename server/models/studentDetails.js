@@ -27,7 +27,7 @@ const attendanceSchema = new mongoose.Schema(
       required: true,
     },
     date: { type: Date, default: Date.now },
-    status: { type: String, enum: ["Present", "Absent"], required: true },
+    status: { type: String, enum: ["present", "absent"], required: true },
   },
   { timestamps: true }
 );
