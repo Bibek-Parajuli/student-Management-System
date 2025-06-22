@@ -3,13 +3,7 @@ const router = express.Router();
 const { Attendance, Student } = require("../models/studentDetails"); // Adjust path
 const mongoose = require("mongoose");
 
-// Middleware (optional): token verification
-// const verifyToken = require("../middlewares/verifyToken")
 
-// POST: Mark attendance
-// POST: Mark attendance (update if already exists)
-
-// GET /api/attendance/:studentId?date=YYYY-MM-DD
 router.get("/attendance/:studentId", async (req, res) => {
   const { studentId } = req.params;
   const { date } = req.query;

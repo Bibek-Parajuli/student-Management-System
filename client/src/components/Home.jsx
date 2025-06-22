@@ -3,21 +3,18 @@ import "../styles/Home.css";
 import { Link } from "react-router-dom";
 import { Unauthorize } from "./Utility";
 
-const Button = ({ text, link }) => {
-  return (
-    <Link to={link}>
-      <button className="action-btn">
-        <i className="fas fa-envelope"></i> {text}
-      </button>
-    </Link>
-  );
-};
+const Button = ({ text, link }) => (
+  <Link to={link}>
+    <button className="action-btn">
+      <i className="fas fa-envelope"></i> {text}
+    </button>
+  </Link>
+);
 
 const Home = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(true);
-  const [isAuthenticated, setIsAuthenticated] = useState(false); // Track authentication state
-  
-  // Sample data - replace with real data from your API
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
   const [stats] = useState({
     totalStudents: 1245,
     activeCourses: 45,
@@ -26,126 +23,78 @@ const Home = () => {
   });
 
   const [recentAnnouncements] = useState([
-    {
-      id: 1,
-      title: "Midterm Schedule Released",
-      body: "This is dherai data",
-      date: "2024-03-15",
-    },
-    {
-      id: 2,
-      title: "New Library Hours",
-      body: "This is dherai data",
-      date: "2024-03-14",
-    },
-    {
-      id: 3,
-      title: "Career Fair Registration Open",
-      body: "This is dherai data",
-      date: "2024-03-13",
-    },
+    { id: 1, title: "Midterm Schedule Released", body: "This is dherai data", date: "2024-03-15" },
+    { id: 2, title: "New Library Hours", body: "This is dherai data", date: "2024-03-14" },
+    { id: 3, title: "Career Fair Registration Open", body: "This is dherai data", date: "2024-03-13" },
   ]);
 
   const [upcomingEvents] = useState([
-    {
-      id: 1,
-      title: "Faculty Meeting",
-      date: "March 20, 2024",
-      time: "2:00 PM",
-    },
-    {
-      id: 2,
-      title: "Student Orientation",
-      date: "March 25, 2024",
-      time: "9:00 AM",
-    },
+    { id: 1, title: "Faculty Meeting", date: "2024-03-20", time: "2:00 PM" },
+    { id: 2, title: "Student Orientation", date: "2024-03-25", time: "9:00 AM" },
   ]);
 
-  // Check authentication on component mount
   useEffect(() => {
-    const token = localStorage.getItem("token"); // Get token from localStorage
-    if (token) {
-      setIsAuthenticated(true); // User is authenticated
-    } else {
-      setIsAuthenticated(false); // User is not authenticated
-    }
-  }, []); // Run this only once when the component mounts
+    const token = localStorage.getItem("token");
+    setIsAuthenticated(!!token);
+  }, []);
 
-  // If not authenticated, show the Unauthorize component
-  if (!isAuthenticated) {
-    return <Unauthorize />;
-  }
+  if (!isAuthenticated) return <Unauthorize />;
 
-  // If authenticated, render the rest of the page
   return (
     <div className="home-container">
-      {/* Header */}
-      <header id="blue" className="home-header-fix">
-        <div className="header-content">
-          <button
-            className="mobile-menu-btn"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            aria-label="Toggle navigation menu"
-          >
+      {/* Updated Glassmorphic Header */}
+      <header className="glass-navbar">
+        <div className="navbar-top">
+          <button className="menu-toggle" onClick={() => setIsMenuOpen(!isMenuOpen)}>
             <i className="fas fa-bars"></i>
           </button>
-          <h1>Student Dashboard</h1>
-          <div className="header-actions">
-            <button className="notification-btn">
+          <h1 className="navbar-title">Student Dashboard</h1>
+          <div className="navbar-right">
+            <div className="notification-btn">
               <i className="fas fa-bell"></i>
               {stats.newMessages > 0 && (
-                <span className="notification-badge">
-                  {stats.newMessages}
-                </span>
+                <span className="notification-count">{stats.newMessages}</span>
               )}
-            </button>
-            <div className="user-profile">
+            </div>
+            <div className="user-info">
               <img
-                src="https://via.placeholder.com/40"
-                alt="User profile"
-                className="profile-pic"
+                src={`https://ui-avatars.com/api/?name=Bibek+Parajuli&background=0D8ABC&color=fff`}
+                alt="User"
+                className="avatar"
               />
-              <span>John Doe</span>
+              <span>Bibek</span>
             </div>
           </div>
         </div>
 
-        {/* Navigation */}
-        <nav className={`main-nav ${isMenuOpen ? "open" : ""}`}>
+        <nav className={`navbar-links ${isMenuOpen ? "open" : ""}`}>
           <Link to="/" className="nav-link active">
             <i className="fas fa-home"></i> Dashboard
           </Link>
           <Link to="/students" className="nav-link">
             <i className="fas fa-users"></i> Students
           </Link>
-
           <Link to="/attendance" className="nav-link">
-            <i className="fas fa-chart-bar"></i> Take Attadance
+            <i className="fas fa-calendar-check"></i> Take Attendance
           </Link>
           <Link to="/contactus" className="nav-link">
-            <i className="fas fa-chart-bar"></i> Contact Us
+            <i className="fas fa-envelope"></i> Contact Us
           </Link>
         </nav>
       </header>
 
-      {/* Main Content */}
+      {/* Main Dashboard Content */}
       <main className="main-content">
-        {/* Quick Stats */}
         <div className="stats-grid">
           <div className="stat-card">
-            <div className="stat-icon">
-              <i className="fas fa-user-graduate"></i>
-            </div>
+            <div className="stat-icon"><i className="fas fa-user-graduate"></i></div>
             <div className="stat-info">
               <h3>Total Students</h3>
               <p>{stats.totalStudents}</p>
             </div>
           </div>
           <div className="stat-card">
-            <div className="stat-icon">
-              <i className="fas fa-book"></i>
-            </div>
-
+            <div className="stat-icon"><i className="fas fa-book"></i></div>
             <div className="stat-info">
               <h3>Upcoming Events</h3>
               <p>{stats.upcomingEvents}</p>
@@ -153,27 +102,18 @@ const Home = () => {
           </div>
         </div>
 
-        {/* Main Sections */}
         <div className="content-grid">
-          {/* Recent Announcements */}
           <section className="announcements-section">
             <div className="section-header">
               <h2>Recent Announcements</h2>
-              <Link to="/announcements" className="view-all">
-                View All
-              </Link>
+              <Link to="/announcements" className="view-all">View All</Link>
             </div>
             <div className="announcements-list">
-              {recentAnnouncements.map((announcement) => (
-                <div key={announcement.id} className="announcement-card">
-                  <div className="announcement-date">
-                    {new Date(announcement.date).toLocaleDateString()}
-                  </div>
-                  <h4 className="announcement-title">{announcement.title}</h4>
-                  <Link
-                    to={`/announcements/${announcement.id}`}
-                    className="read-more"
-                  >
+              {recentAnnouncements.map((a) => (
+                <div key={a.id} className="announcement-card">
+                  <div className="announcement-date">{new Date(a.date).toLocaleDateString()}</div>
+                  <h4 className="announcement-title">{a.title}</h4>
+                  <Link to={`/announcements/${a.id}`} className="read-more">
                     Read More <i className="fas fa-chevron-right"></i>
                   </Link>
                 </div>
@@ -181,25 +121,18 @@ const Home = () => {
             </div>
           </section>
 
-          {/* Upcoming Events */}
           <section className="events-section">
             <div className="section-header">
               <h2>Upcoming Events</h2>
-              <Link to="/calendar" className="view-all">
-                View Calendar
-              </Link>
+              <Link to="/calendar" className="view-all">View Calendar</Link>
             </div>
             <div className="events-list">
               {upcomingEvents.map((event) => (
                 <div key={event.id} className="event-card">
                   <div className="event-date">
-                    <div className="event-day">
-                      {new Date(event.date).getDate()}
-                    </div>
+                    <div className="event-day">{new Date(event.date).getDate()}</div>
                     <div className="event-month">
-                      {new Date(event.date).toLocaleString("default", {
-                        month: "short",
-                      })}
+                      {new Date(event.date).toLocaleString("default", { month: "short" })}
                     </div>
                   </div>
                   <div className="event-info">
@@ -214,11 +147,8 @@ const Home = () => {
             </div>
           </section>
 
-          {/* Quick Actions Sidebar */}
           <aside className="quick-actions">
-            <div className="section-header">
-              <h2>Quick Actions</h2>
-            </div>
+            <div className="section-header"><h2>Quick Actions</h2></div>
             <div className="action-buttons">
               <Button text="Add New Student" link="/addstudent" />
               <Button text="Send Announcement" link="/addannouncement" />
