@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import axios from "axios";
 import "../styles/Home.css";
 import { Link } from "react-router-dom";
 import { Unauthorize } from "./Utility";
@@ -16,36 +17,43 @@ const Home = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const [stats] = useState({
-    totalStudents: 1245,
-    activeCourses: 45,
-    upcomingEvents: 3,
-    newMessages: 2,
+    totalStudents: 2,
+    // activeCourses: 45,
+    // upcomingEvents: 3,
+    // newMessages: 2,
   });
 
-  const [recentAnnouncements] = useState([
-    { id: 1, title: "Midterm Schedule Released", body: "This is dherai data", date: "2024-03-15" },
-    { id: 2, title: "New Library Hours", body: "This is dherai data", date: "2024-03-14" },
-    { id: 3, title: "Career Fair Registration Open", body: "This is dherai data", date: "2024-03-13" },
-  ]);
-
-  const [upcomingEvents] = useState([
-    { id: 1, title: "Faculty Meeting", date: "2024-03-20", time: "2:00 PM" },
-    { id: 2, title: "Student Orientation", date: "2024-03-25", time: "9:00 AM" },
-  ]);
+  const [recentAnnouncements, setRecentAnnouncements] = useState([]);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     setIsAuthenticated(!!token);
+
+    if (token) {
+      // Fetch announcements
+      axios
+        .get("http://localhost:3000/api/notice/announcements", {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        .then((res) => setRecentAnnouncements(res.data))
+        .catch((err) => console.error("Error fetching announcements:", err));
+
+      // Fetch events
+      // 
+    }
   }, []);
 
   if (!isAuthenticated) return <Unauthorize />;
 
   return (
     <div className="home-container">
-      {/* Updated Glassmorphic Header */}
+      {/* Glassmorphic Header */}
       <header className="glass-navbar">
         <div className="navbar-top">
-          <button className="menu-toggle" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+          <button
+            className="menu-toggle"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+          >
             <i className="fas fa-bars"></i>
           </button>
           <h1 className="navbar-title">Student Dashboard</h1>
@@ -87,17 +95,12 @@ const Home = () => {
       <main className="main-content">
         <div className="stats-grid">
           <div className="stat-card">
-            <div className="stat-icon"><i className="fas fa-user-graduate"></i></div>
+            <div className="stat-icon">
+              <i className="fas fa-user-graduate"></i>
+            </div>
             <div className="stat-info">
               <h3>Total Students</h3>
               <p>{stats.totalStudents}</p>
-            </div>
-          </div>
-          <div className="stat-card">
-            <div className="stat-icon"><i className="fas fa-book"></i></div>
-            <div className="stat-info">
-              <h3>Upcoming Events</h3>
-              <p>{stats.upcomingEvents}</p>
             </div>
           </div>
         </div>
@@ -106,49 +109,32 @@ const Home = () => {
           <section className="announcements-section">
             <div className="section-header">
               <h2>Recent Announcements</h2>
-              <Link to="/announcements" className="view-all">View All</Link>
+              <Link to="/announcements" className="view-all">
+                View All
+              </Link>
             </div>
             <div className="announcements-list">
-              {recentAnnouncements.map((a) => (
-                <div key={a.id} className="announcement-card">
-                  <div className="announcement-date">{new Date(a.date).toLocaleDateString()}</div>
-                  <h4 className="announcement-title">{a.title}</h4>
-                  <Link to={`/announcements/${a.id}`} className="read-more">
-                    Read More <i className="fas fa-chevron-right"></i>
-                  </Link>
-                </div>
-              ))}
-            </div>
-          </section>
-
-          <section className="events-section">
-            <div className="section-header">
-              <h2>Upcoming Events</h2>
-              <Link to="/calendar" className="view-all">View Calendar</Link>
-            </div>
-            <div className="events-list">
-              {upcomingEvents.map((event) => (
-                <div key={event.id} className="event-card">
-                  <div className="event-date">
-                    <div className="event-day">{new Date(event.date).getDate()}</div>
-                    <div className="event-month">
-                      {new Date(event.date).toLocaleString("default", { month: "short" })}
+              {recentAnnouncements.length === 0 ? (
+                <p className="no-data">No announcements available.</p>
+              ) : (
+                recentAnnouncements.map((a) => (
+                  <div key={a._id} className="announcement-card">
+                    <div className="announcement-date">
+                      {new Date(a.date).toLocaleDateString()}
                     </div>
+                    <h4 className="announcement-title">{a.title}</h4>
+                    <Link to={`/announcements/${a._id}`} className="read-more">
+                      Read More <i className="fas fa-chevron-right"></i>
+                    </Link>
                   </div>
-                  <div className="event-info">
-                    <h4 className="event-title">{event.title}</h4>
-                    <p className="event-time">{event.time}</p>
-                  </div>
-                  <button className="event-reminder">
-                    <i className="fas fa-bell"></i> Set Reminder
-                  </button>
-                </div>
-              ))}
+                ))
+              )}
             </div>
           </section>
-
           <aside className="quick-actions">
-            <div className="section-header"><h2>Quick Actions</h2></div>
+            <div className="section-header">
+              <h2>Quick Actions</h2>
+            </div>
             <div className="action-buttons">
               <Button text="Add New Student" link="/addstudent" />
               <Button text="Send Announcement" link="/addannouncement" />

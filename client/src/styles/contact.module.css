@@ -1,8 +1,6 @@
-/* Contact.css */
-@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css');
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
-.contact-container {
+.container {
   font-family: 'Poppins', sans-serif;
   max-width: 1200px;
   margin: 0 auto;
@@ -10,31 +8,34 @@
   color: #333;
 }
 
-.contact-header {
+/* Header */
+.header {
   text-align: center;
   margin-bottom: 3rem;
 }
 
-.contact-header h1 {
+.header h1 {
   font-size: 2.5rem;
   color: #2c3e50;
   margin-bottom: 1rem;
 }
 
-.contact-header p {
+.header p {
   font-size: 1.1rem;
   color: #7f8c8d;
   max-width: 600px;
   margin: 0 auto;
 }
 
-.contact-content {
+/* Layout */
+.content {
   display: flex;
   flex-wrap: wrap;
   gap: 2rem;
 }
 
-.contact-info {
+/* Info Section */
+.infoGrid {
   flex: 1;
   min-width: 300px;
   display: grid;
@@ -42,7 +43,7 @@
   gap: 1.5rem;
 }
 
-.info-card {
+.infoCard {
   background: #fff;
   padding: 1.5rem;
   border-radius: 10px;
@@ -50,30 +51,30 @@
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.info-card:hover {
+.infoCard:hover {
   transform: translateY(-5px);
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
 }
 
-.info-card i {
+.infoCard i {
   font-size: 1.8rem;
   color: #3498db;
   margin-bottom: 1rem;
 }
 
-.info-card h3 {
+.infoCard h3 {
   font-size: 1.3rem;
   margin-bottom: 0.5rem;
   color: #2c3e50;
 }
 
-.info-card p {
+.infoCard p {
   color: #7f8c8d;
   line-height: 1.6;
-  margin: 0.3rem 0;
 }
 
-.contact-form-container {
+/* Form Section */
+.formContainer {
   flex: 1;
   min-width: 300px;
   background: #fff;
@@ -82,94 +83,104 @@
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
-.contact-form-container h2 {
+.formContainer h2 {
   font-size: 1.8rem;
   color: #2c3e50;
   margin-bottom: 1.5rem;
   text-align: center;
 }
 
-.success-message {
+/* Success Message */
+.success {
   background: #2ecc71;
-  color: white;
+  color: #fff;
   padding: 1rem;
-  border-radius: 5px;
+  border-radius: 6px;
   margin-bottom: 1.5rem;
   text-align: center;
-  animation: fadeIn 0.5s ease;
+  animation: fadeIn 0.4s ease;
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.form-group {
+/* Form */
+.formGroup {
   margin-bottom: 1.5rem;
 }
 
-.form-group label {
+.formGroup label {
   display: block;
   font-weight: 500;
   margin-bottom: 0.5rem;
   color: #2c3e50;
 }
 
-.form-group input,
-.form-group textarea {
+.formGroup input,
+.formGroup textarea {
   width: 100%;
   padding: 0.8rem;
   border: 1px solid #ddd;
-  border-radius: 5px;
+  border-radius: 6px;
   font-family: 'Poppins', sans-serif;
-  font-size: 1rem;
-  transition: border-color 0.3s ease;
+  font-size: 0.95rem;
+  transition: border-color 0.3s ease, box-shadow 0.2s ease;
 }
 
-.form-group input:focus,
-.form-group textarea:focus {
+.formGroup input:focus,
+.formGroup textarea:focus {
   outline: none;
   border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.15);
 }
 
-.form-group textarea {
+.formGroup textarea {
   resize: vertical;
   min-height: 120px;
 }
 
-.submit-btn {
+/* Button */
+.submitBtn {
   background: #3498db;
-  color: white;
+  color: #fff;
   border: none;
-  padding: 0.8rem 1.5rem;
+  padding: 0.85rem;
   font-size: 1rem;
-  border-radius: 5px;
+  border-radius: 6px;
   cursor: pointer;
-  transition: background 0.3s ease, transform 0.2s ease;
   width: 100%;
   font-weight: 500;
+  transition: background 0.3s ease, transform 0.2s ease;
 }
 
-.submit-btn:hover {
+.submitBtn:hover {
   background: #2980b9;
   transform: translateY(-2px);
 }
 
-.submit-btn:active {
+.submitBtn:active {
   transform: translateY(0);
 }
 
-/* Responsive adjustments */
+/* Responsive */
 @media (max-width: 768px) {
-  .contact-content {
+  .content {
     flex-direction: column;
   }
-  
-  .contact-info {
+
+  .infoGrid {
     grid-template-columns: 1fr;
   }
-  
-  .contact-header h1 {
+
+  .header h1 {
     font-size: 2rem;
   }
 }

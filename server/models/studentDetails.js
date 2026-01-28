@@ -47,7 +47,7 @@ const authSchema = new mongoose.Schema(
       default: "admin",
       require: true,
     },
-    email:{type:String,require:true},
+    email: { type: String, require: true },
 
     adminDetails: {
       type: mongoose.Schema.Types.ObjectId,

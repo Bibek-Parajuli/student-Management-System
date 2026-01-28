@@ -10,6 +10,7 @@ import AddStudent from './components/StudentsCRUD';
 import Contact from './components/Contact';
 import axios from 'axios';
 import { useEffect } from 'react';
+import SingleAnnouncement from './components/singleAnnouncement';
 
 function App() {
   const location=useLocation();
@@ -39,6 +40,8 @@ axios.interceptors.request.use(config => {
         <Route path="/attendance" element={<AttendancePage />} />
         <Route path="/students" element={<Students />} />
         <Route path="/announcement" element={<EmailAnnouncement />} />
+
+        <Route path="/announcements/:id" element={<SingleAnnouncement />} />
         <Route path="/addannouncement" element={<SendAnnouncement />} />
         <Route path="/addstudent" element={<AddStudent />} />
         <Route path="/" element={<Login />} />

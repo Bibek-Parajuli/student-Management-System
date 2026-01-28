@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import styles from '../styles/Announcement.module.css';
 import Navbar from './Utility';
 
@@ -6,21 +7,59 @@ const SendAnnouncement = () => {
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
   const [audience, setAudience] = useState('all');
+  const [loading, setLoading] = useState(false);
+  const [successMsg, setSuccessMsg] = useState('');
+  const [errorMsg, setErrorMsg] = useState('');
 
-  const handleSend = (e) => {
+  const handleSend = async (e) => {
     e.preventDefault();
-    console.log({ subject, message, audience });    
-    setSubject('');
-    setMessage('');
-    setAudience('all');
+    setLoading(true);
+    setSuccessMsg('');
+    setErrorMsg('');
+
+    try {
+      const token = localStorage.getItem('token'); // If your API requires auth
+      const response = await axios.post(
+        'http://localhost:3000/api/notice/announcements',
+        {
+          title: subject,
+          body: message,
+          // Optional: audience field if backend supports it
+          // audience,
+          date: new Date(), // current date
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      setSuccessMsg('Announcement uploaded successfully!');
+      setSubject('');
+      setMessage('');
+      setAudience('all');
+      console.log('Announcement response:', response.data);
+    } catch (error) {
+      console.error('Error sending announcement:', error);
+      setErrorMsg(
+        error.response?.data?.message || 'Failed to upload announcement.'
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className={styles.container}>
-     <Navbar title='Upload Announcement'/>
+      <Navbar title="Upload Announcement" />
 
       <main className={styles.mainContent}>
         <form onSubmit={handleSend} className={styles.form}>
+          {successMsg && <p className={styles.successMsg}>{successMsg}</p>}
+          {errorMsg && <p className={styles.errorMsg}>{errorMsg}</p>}
+
           <div className={styles.formGroup}>
             <label htmlFor="subject">Subject</label>
             <input
@@ -31,36 +70,27 @@ const SendAnnouncement = () => {
               className={styles.inputField}
               required
             />
-          </div>    
+          </div>
 
           <div className={styles.formGroup}>
             <label htmlFor="message">Message</label>
-            <div className={styles.editorContainer}>
-              {/* <div className={styles.toolbar}> */}
-                {/* <button type="button" className={styles.toolButton}>
-                  <span className={styles.bold}>B</span>
-                </button>
-                <button type="button" className={styles.toolButton}>
-                  <span className={styles.italic}>I</span>
-                </button>
-                <button type="button" className={styles.toolButton}>
-                  <span className={styles.list}>•</span>
-                </button>
-              </div> */}
-              <textarea
-                id="message"
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                className={styles.textarea}
-                rows={6}
-                required
-              />
-            </div>
+            <textarea
+              id="message"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              className={styles.textarea}
+              rows={6}
+              required
+            />
           </div>
 
           <div className={styles.buttonContainer}>
-            <button type="submit" className={styles.primaryButton}>
-              Upload Announcement
+            <button
+              type="submit"
+              className={styles.primaryButton}
+              disabled={loading}
+            >
+              {loading ? 'Uploading...' : 'Upload Announcement'}
             </button>
           </div>
         </form>

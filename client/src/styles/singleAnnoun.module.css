@@ -1,0 +1,66 @@
+.container {
+  min-height: 100vh;
+  background-color: #f5f7fb;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Main content area */
+.mainContent {
+  max-width: 800px;
+  margin: 2rem auto;
+  background: #ffffff;
+  padding: 2rem 2.5rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+/* Announcement title */
+.title {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 0.5rem;
+}
+
+/* Date */
+.date {
+  font-size: 0.9rem;
+  color: #6b7280;
+  margin-bottom: 1.5rem;
+}
+
+/* Announcement body */
+.body {
+  font-size: 1rem;
+  line-height: 1.7;
+  color: #374151;
+  margin-bottom: 2rem;
+  white-space: pre-line; /* preserves line breaks */
+}
+
+/* Back link */
+.backLink {
+  display: inline-block;
+  text-decoration: none;
+  color: #2563eb;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.backLink:hover {
+  color: #1e40af;
+  text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .mainContent {
+    margin: 1rem;
+    padding: 1.5rem;
+  }
+
+  .title {
+    font-size: 1.5rem;
+  }
+}
