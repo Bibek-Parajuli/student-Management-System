@@ -6,11 +6,12 @@ const useStudents = () => {
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+const API = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     const fetchStudents = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/student/all");
+        const response = await axios.get(`${API}/student/all`);
         if (Array.isArray(response.data.Student)) {
           setStudents(response.data.Student);
         } else {
