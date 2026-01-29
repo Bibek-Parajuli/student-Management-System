@@ -5,9 +5,13 @@ const app = express();
 const cors = require("cors");
 app.use(cors());
 const mongoose = require("mongoose");
-mongoose
-  .connect("mongodb://localhost:27017/student")
-  .then(() => console.log("database connected"));
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log("✅ Database connected"))
+  .catch(err => {
+    console.error("❌ MongoDB connection failed:", err.message);
+    process.exit(1);
+  });
+
 const { Student, Auth, Attendance } = require("./models/studentDetails");
 const studentsRoute = require("./routes/students");
 
