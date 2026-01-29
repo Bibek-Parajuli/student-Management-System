@@ -38,7 +38,7 @@ axios.interceptors.request.use(config => {
         <Route path="/contactus" element={<Contact />} />
         <Route path='*' element={<NotFound/>} />
         <Route path="/attendance" element={<AttendancePage />} />
-        <Route path="/students" element={<Students />} />
+        <Route path="/students" element={<Students/>} />
         <Route path="/announcement" element={<EmailAnnouncement />} />
 
         <Route path="/announcements/:id" element={<SingleAnnouncement />} />

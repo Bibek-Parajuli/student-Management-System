@@ -1,8 +1,6 @@
-import { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import '../styles/Home.css';
-
-import "../styles/Navbar.module.css"; // custom styles
+import { useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import "../styles/Navbar.module.css";
 
 const Navbar = ({
   title = "Student Dashboard",
@@ -11,12 +9,22 @@ const Navbar = ({
 }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
 
   const links = [
     { path: "/dashboard", icon: "fa-home", label: "Dashboard" },
     { path: "/students", icon: "fa-users", label: "Students" },
     { path: "/attendance", icon: "fa-calendar-check", label: "Attendance" },
   ];
+
+  // 🔓 LOGOUT HANDLER
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+
+    // redirect to login page
+    navigate("/login");
+  };
 
   return (
     <header className="glass-navbar">
@@ -27,14 +35,19 @@ const Navbar = ({
         >
           <i className="fas fa-bars"></i>
         </button>
+
         <h1 className="navbar-title">{title}</h1>
+
         <div className="navbar-right">
-          <div className="notification-btn">
-            <i className="fas fa-bell"></i>
-            {notifications > 0 && (
-              <span className="notification-count">{notifications}</span>
-            )}
+          <div
+            className="notification-btn"
+            onClick={handleLogout}
+            style={{ cursor: "pointer" }}
+            title="Logout"
+          >Logout
+            
           </div>
+
           <div className="user-info">
             <img
               src={
@@ -66,12 +79,9 @@ const Navbar = ({
   );
 };
 
+// ❌ Unauthorized page (simple placeholder)
+export const Unauthorize = () => {
+  return <div>Unauthorized</div>;
+};
 
- 
- export const Unauthorize = () => {
-   return (
-     <div>Unauthorize</div>
-   )
- }
- 
 export default Navbar;

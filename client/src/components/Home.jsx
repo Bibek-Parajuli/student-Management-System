@@ -1,8 +1,11 @@
+// src/components/Home.jsx
 import { useEffect, useState } from "react";
 import axios from "axios";
-import "../styles/Home.css";
 import { Link } from "react-router-dom";
+import Navbar from "../components/Utility";
 import { Unauthorize } from "./Utility";
+import "../styles/Home.css";
+const API = import.meta.env.VITE_API_URL;
 
 const Button = ({ text, link }) => (
   <Link to={link}>
@@ -13,33 +16,29 @@ const Button = ({ text, link }) => (
 );
 
 const Home = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-
   const [stats] = useState({
     totalStudents: 2,
-    // activeCourses: 45,
-    // upcomingEvents: 3,
-    // newMessages: 2,
+    newMessages: 1,
   });
-
   const [recentAnnouncements, setRecentAnnouncements] = useState([]);
+
+  const user = {
+    name: "Bibek",
+    profilePic: "",
+  };
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     setIsAuthenticated(!!token);
 
     if (token) {
-      // Fetch announcements
       axios
-        .get("http://localhost:3000/api/notice/announcements", {
+        .get(`${API}/api/notice/announcements`, {
           headers: { Authorization: `Bearer ${token}` },
         })
         .then((res) => setRecentAnnouncements(res.data))
         .catch((err) => console.error("Error fetching announcements:", err));
-
-      // Fetch events
-      // 
     }
   }, []);
 
@@ -47,49 +46,12 @@ const Home = () => {
 
   return (
     <div className="home-container">
-      {/* Glassmorphic Header */}
-      <header className="glass-navbar">
-        <div className="navbar-top">
-          <button
-            className="menu-toggle"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-          >
-            <i className="fas fa-bars"></i>
-          </button>
-          <h1 className="navbar-title">Student Dashboard</h1>
-          <div className="navbar-right">
-            <div className="notification-btn">
-              <i className="fas fa-bell"></i>
-              {stats.newMessages > 0 && (
-                <span className="notification-count">{stats.newMessages}</span>
-              )}
-            </div>
-            <div className="user-info">
-              <img
-                src={`https://ui-avatars.com/api/?name=Bibek+Parajuli&background=0D8ABC&color=fff`}
-                alt="User"
-                className="avatar"
-              />
-              <span>Bibek</span>
-            </div>
-          </div>
-        </div>
-
-        <nav className={`navbar-links ${isMenuOpen ? "open" : ""}`}>
-          <Link to="/" className="nav-link active">
-            <i className="fas fa-home"></i> Dashboard
-          </Link>
-          <Link to="/students" className="nav-link">
-            <i className="fas fa-users"></i> Students
-          </Link>
-          <Link to="/attendance" className="nav-link">
-            <i className="fas fa-calendar-check"></i> Take Attendance
-          </Link>
-          <Link to="/contactus" className="nav-link">
-            <i className="fas fa-envelope"></i> Contact Us
-          </Link>
-        </nav>
-      </header>
+      {/* Navbar */}
+      <Navbar
+        title="Student Dashboard"
+        user={user}
+        notifications={stats.newMessages}
+      />
 
       {/* Main Dashboard Content */}
       <main className="main-content">
@@ -123,7 +85,10 @@ const Home = () => {
                       {new Date(a.date).toLocaleDateString()}
                     </div>
                     <h4 className="announcement-title">{a.title}</h4>
-                    <Link to={`/announcements/${a._id}`} className="read-more">
+                    <Link
+                      to={`/announcements/${a._id}`}
+                      className="read-more"
+                    >
                       Read More <i className="fas fa-chevron-right"></i>
                     </Link>
                   </div>
@@ -131,6 +96,7 @@ const Home = () => {
               )}
             </div>
           </section>
+
           <aside className="quick-actions">
             <div className="section-header">
               <h2>Quick Actions</h2>

@@ -2,6 +2,7 @@ import  { useState } from "react";
 import "../styles/Register.css";
 import { Link,useNavigate } from "react-router-dom";
 import axios from "axios";
+const API = import.meta.env.VITE_API_URL;
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -35,7 +36,7 @@ const Register = () => {
       console.log(formData);
       
       // Replace with your actual API endpoint
-      await axios.post("http://localhost:3000/auth/register", formData);
+      await axios.post(`${API}/auth/register`, formData);
 
       console.log("Registration successful");
       navigate('/login');

@@ -1,41 +1,47 @@
-import  { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 import "../styles/Login.css";
+import { useEffect } from "react";
+const API = import.meta.env.VITE_API_URL;
 
 const Login = () => {
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState("");
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-    email: '',
-    password: ''
+    email: "",
+    password: "",
   });
-
+  useEffect(() => {
+    // Clear auth token & user info when navigating to login
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+  }, []); //
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prevState => ({
+    setFormData((prevState) => ({
       ...prevState,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const validateForm = () => {
     const newErrors = {};
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    
+
     if (!formData.email) {
-      newErrors.email = 'Email is required';
+      newErrors.email = "Email is required";
     } else if (!emailRegex.test(formData.email)) {
-      newErrors.email = 'Invalid email format';
+      newErrors.email = "Invalid email format";
     }
-    
+
     if (!formData.password) {
-      newErrors.password = 'Password is required';
+      newErrors.password = "Password is required";
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -45,29 +51,28 @@ const Login = () => {
     if (!validateForm()) return;
 
     setIsLoading(true);
-    setErrorMessage('');
+    setErrorMessage("");
 
     try {
       const response = await axios.post(
-        'http://localhost:3000/auth/login',
-        formData
+        `${API}/auth/login`,
+        formData,
       );
 
       if (response.status === 201) {
         // Store the token in localStorage
-        alert(response.data.token)
         console.log(response.data.token);
-        
-        localStorage.setItem('token', response.data.token);
-        
+
+        localStorage.setItem("token", response.data.token);
+
         // Redirect to dashboard or home page
-        navigate('/dashboard');
+        navigate("/dashboard");
       }
     } catch (error) {
       if (error.response) {
-        setErrorMessage(error.response.data.message || 'Login failed');
+        setErrorMessage(error.response.data.message || "Login failed");
       } else {
-        setErrorMessage('Error occurred! Please try again later');
+        setErrorMessage("Error occurred! Please try again later");
       }
     } finally {
       setIsLoading(false);
@@ -84,9 +89,7 @@ const Login = () => {
 
         <form onSubmit={handleSubmit} className="auth-form">
           {errorMessage && (
-            <div className="error-message global-error">
-              {errorMessage}
-            </div>
+            <div className="error-message global-error">{errorMessage}</div>
           )}
 
           <div className="form-group">
@@ -97,10 +100,12 @@ const Login = () => {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              className={errors.email ? 'error' : ''}
+              className={errors.email ? "error" : ""}
               placeholder="Enter your email"
             />
-            {errors.email && <span className="error-message">{errors.email}</span>}
+            {errors.email && (
+              <span className="error-message">{errors.email}</span>
+            )}
           </div>
 
           <div className="form-group">
@@ -111,10 +116,12 @@ const Login = () => {
               name="password"
               value={formData.password}
               onChange={handleChange}
-              className={errors.password ? 'error' : ''}
+              className={errors.password ? "error" : ""}
               placeholder="Enter your password"
             />
-            {errors.password && <span className="error-message">{errors.password}</span>}
+            {errors.password && (
+              <span className="error-message">{errors.password}</span>
+            )}
           </div>
 
           <div className="form-options">
@@ -133,12 +140,15 @@ const Login = () => {
                 <i className="fas fa-spinner fa-spin"></i> Logging in...
               </>
             ) : (
-              'Login'
+              "Login"
             )}
           </button>
 
           <div className="auth-footer">
-            <p>Don&apos;t have an account? <Link to="/register">Register here</Link></p>
+            <p>
+              Don&apos;t have an account?{" "}
+              <Link to="/register">Register here</Link>
+            </p>
           </div>
         </form>
       </div>

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import "../styles/Attadance.css";
 import useStudents from "../hooks/useStudent";
 import Navbar, { Unauthorize } from "./Utility";
+const API = import.meta.env.VITE_API_URL;
 
 const token = localStorage.getItem("token");
 
@@ -37,7 +38,7 @@ const AttendancePage = () => {
         filteredStudents.map(async (student) => {
           try {
             const res = await fetch(
-              `http://localhost:3000/api/attendance/${student._id}?date=${selectedDate}`,
+              `${API}/api/attendance/${student._id}?date=${selectedDate}`,
               {
                 headers: {
                   Authorization: `Bearer ${token}`,
@@ -68,7 +69,7 @@ const AttendancePage = () => {
     filteredStudents.forEach(async (student) => {
       try {
         const res = await fetch(
-          `http://localhost:3000/api/summary/${student._id}?month=${month}`,
+          `${API}/api/summary/${student._id}?month=${month}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -136,7 +137,7 @@ const AttendancePage = () => {
   const sendAttendanceToBackend = async (studentId, status) => {
     const normalizedDate = new Date(selectedDate + "T00:00:00.000Z");
 
-    const res = await fetch("http://localhost:3000/api/attendance", {
+    const res = await fetch(`${API}/api/attendance`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

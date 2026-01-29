@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import styles from '../styles/StudentCRUD.module.css';
 import Navbar from './Utility';
 import axios from 'axios';
+const API = import.meta.env.VITE_API_URL;
 
-const URL = 'http://localhost:3000/student';
+const URL = `${API}/student`;
 
 const AddStudent = () => {
   const [formData, setFormData] = useState({

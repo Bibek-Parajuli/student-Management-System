@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import styles from '../styles/singleAnnoun.module.css';
 import Navbar from './Utility';
+const API = import.meta.env.VITE_API_URL;
 
 const SingleAnnouncement = () => {
   const { id } = useParams();
@@ -14,7 +15,7 @@ const SingleAnnouncement = () => {
     const fetchAnnouncement = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await axios.get(`http://localhost:3000/api/notice/announcements/${id}`, {
+        const response = await axios.get(`${API}/api/notice/announcements/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setAnnouncement(response.data);
